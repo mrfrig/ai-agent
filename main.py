@@ -1,7 +1,9 @@
 import os
 import sys
+
 from dotenv import load_dotenv
 from google import genai
+from google.genai import types
 
 
 def main():
@@ -10,6 +12,9 @@ def main():
         return sys.exit(1)
 
     prompt = sys.argv[1]
+    messages = [
+        types.Content(role="user", parts=[types.Part(text=prompt)]),
+    ]
     load_dotenv()
     api_key = os.environ.get("GEMINI_API_KEY")
 
@@ -17,7 +22,7 @@ def main():
 
     generated_content = client.models.generate_content(
         model="gemini-2.0-flash-001",
-        contents=prompt,
+        contents=messages,
     )
 
     print(generated_content.text)
