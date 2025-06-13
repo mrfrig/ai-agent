@@ -5,6 +5,8 @@ from dotenv import load_dotenv
 from google import genai
 from google.genai import types
 
+from prompts import system_prompt
+
 
 def main():
     if len(sys.argv) <= 1:
@@ -25,6 +27,7 @@ def main():
     generated_content = client.models.generate_content(
         model="gemini-2.0-flash-001",
         contents=messages,
+        config=types.GenerateContentConfig(system_instruction=system_prompt),
     )
 
     print(generated_content.text)
