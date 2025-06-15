@@ -6,6 +6,12 @@ from google import genai
 from google.genai import types
 
 from prompts import system_prompt
+from schemas import (
+    schema_get_files_info,
+    schema_get_file_content,
+    schema_run_python_file,
+    schema_write_file,
+)
 
 
 def main():
@@ -13,23 +19,12 @@ def main():
         print("Usage: python3 main.py <prompt> [flags]")
         return sys.exit(1)
 
-    schema_get_files_info = types.FunctionDeclaration(
-        name="get_files_info",
-        description="Lists files in the specified directory along with their sizes, constrained to the working directory.",
-        parameters=types.Schema(
-            type=types.Type.OBJECT,
-            properties={
-                "directory": types.Schema(
-                    type=types.Type.STRING,
-                    description="The directory to list files from, relative to the working directory. If not provided, lists files in the working directory itself.",
-                ),
-            },
-        ),
-    )
-
     available_functions = types.Tool(
         function_declarations=[
             schema_get_files_info,
+            schema_get_file_content,
+            schema_run_python_file,
+            schema_write_file,
         ]
     )
 
