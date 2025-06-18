@@ -1,6 +1,6 @@
 from google.genai import types
 
-from config import WORKING_DIRECTORY
+from config import WORKING_DIR
 from functions.get_file_content import get_file_content, schema_get_file_content
 from functions.get_files_info import get_files_info, schema_get_files_info
 from functions.run_python import run_python_file, schema_run_python_file
@@ -41,7 +41,7 @@ def call_function(function_call_part, verbose=False):
             ],
         )
 
-    function_result = function_map[function_name](WORKING_DIRECTORY, **function_args)
+    function_result = function_map[function_name](WORKING_DIR, **function_args)
 
     return types.Content(
         role="tool",
