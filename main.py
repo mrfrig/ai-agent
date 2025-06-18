@@ -36,7 +36,9 @@ def main():
     generate_content(client, messages, verbose)
 
 
-def generate_content(client, messages, verbose):
+def generate_content(
+    client: genai.Client, messages: list[types.Content], verbose, iteration=1
+):
     response = client.models.generate_content(
         model="gemini-2.0-flash-001",
         contents=messages,
@@ -48,8 +50,13 @@ def generate_content(client, messages, verbose):
         print("Prompt tokens:", response.usage_metadata.prompt_token_count)
         print("Response tokens:", response.usage_metadata.candidates_token_count)
 
-    if not response.function_calls:
+    if not response.function_calls or iteration >= 20:
+        print("Final response:")
+        print(response.text)
         return response.text
+
+    for candidate in response.candidates:
+        messages.append(candidate.content)
 
     for function_call_part in response.function_calls:
         function_call_result = call_function(function_call_part)
@@ -57,6 +64,9 @@ def generate_content(client, messages, verbose):
             raise Exception("Response missing")
         if verbose:
             print(f"-> {function_call_result.parts[0].function_response.response}")
+        messages.append(function_call_result)
+
+    generate_content(client, messages, verbose, iteration + 1)
 
 
 if __name__ == "__main__":
